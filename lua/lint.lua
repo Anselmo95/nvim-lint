@@ -290,12 +290,12 @@ function M.lint(linter, opts)
   if iswin then
     linter = vim.tbl_extend("force", linter, {
       cmd = "cmd.exe",
-      args = { "/C", linter.cmd, unpack(linter.args or {}) },
+      args = { "/C", linter.cmd, unpack(eval_fn_or_id(linter.args) or {}) },
     })
   end
   opts = opts or {}
-  if linter.args then
-    vim.list_extend(args, vim.tbl_map(eval_fn_or_id, linter.args))
+  if eval_fn_or_id(linter.args) then
+    vim.list_extend(args, vim.tbl_map(eval_fn_or_id, eval_fn_or_id(linter.args)))
   end
   if not linter.stdin and linter.append_fname ~= false then
     table.insert(args, api.nvim_buf_get_name(bufnr))
